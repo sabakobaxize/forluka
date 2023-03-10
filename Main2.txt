@@ -1,0 +1,62 @@
+    #include <stdio.h>
+int main()
+{
+      printf("using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using static ConsoleApp2.HangmanGame;
+
+namespace ConsoleApp2
+{
+    internal class ConsoleApp2
+    {
+
+        static public void Main(String[] args)
+        {
+            int UserChoice = Gamemode();
+            if (UserChoice == 1)
+            {
+                new HangmanGame(GameMode.Easy).Start();
+            }
+            if (UserChoice == 2)
+            {
+                new HangmanGame(GameMode.Medium).Start();
+            }
+            if (UserChoice == 3)
+            {
+                new HangmanGame(GameMode.Hard).Start();
+            }
+         
+
+        }
+         static private int Gamemode()
+         {
+             Console.WriteLine(\"please enter what game mode you want \n\"
+                 + \"for easy mode enter 1 \n\" + \"for medium mode enter 2 \n\" + \"for hard mode enter 3 \n\");
+             int UserChoice = 0;
+             while (true)
+             {
+                  UserChoice = Int32.Parse(Console.ReadLine());
+
+                 if (UserChoice > 3)
+                 {
+                     Console.WriteLine(\"please enter only 1 2 or 3\");
+                    return  Int32.Parse(Console.ReadLine());
+                 }
+                 else
+                 {
+                     return UserChoice;
+                     break;
+                 }
+
+             }
+
+         } 
+     }
+    }
+\n");
+      return 0;
+}
