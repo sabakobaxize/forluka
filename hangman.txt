@@ -1,0 +1,317 @@
+#include <stdio.h>
+int main()
+{
+      printf("using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.SymbolStore;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
+using static ConsoleApp2.HangmanGame;
+
+namespace ConsoleApp2
+{
+    public class HangmanGame
+    {
+        // Instant variables
+        private HashSet<char> UsedChars;
+
+        private int Lives;
+        private bool GameIsFinished;
+        private bool WonGame;
+
+        private string SecretWord;
+        private string CurrentWord;
+
+
+        private string[] Stages;
+
+        // Const variables
+        private const int _MaxLengthForEasyWord = 4;
+
+        private const int _MinLengthForMediumWord = 4;
+        private const int _MaxLengthForMediumWord = 6;
+
+        private const int _MinLengthForHardWord = 5;
+
+        private const int _LivesForEasyMode = 9;
+        private const int _LivesForMediumMode = 7;
+        private const int _LivesForHardMode = 4;
+
+        
+        private const string _Stage0 =
+           \"  +---+ \n\" +
+           \"      | \n\" +
+           \"      | \n\" +
+           \"      |\n\" +
+           \"      |\n\" +
+           \"      | \n\" +
+           \"=========\";
+        private const string _Stage1 =
+            \"  +---+ \n\" +
+            \"  |   | \n\" +
+            \"      | \n\" +
+            \"      |\n\" +
+            \"      |\n\" +
+            \"      | \n\" +
+            \"=========\";
+        private const string _Stage2 =
+            \"  +---+ \n\" +
+            \"  |   | \n\" +
+            \"  O   | \n\" +
+            \"      |\n\" +
+            \"      |\n\" +
+            \"      | \n\" +
+            \"=========\";
+        private const string _Stage3 =
+            \"  +---+ \n\" +
+            \"  |   | \n\" +
+            \"  O   | \n\" +
+            \"  |   |\n\" +
+            \"      |\n\" +
+            \"      | \n\" +
+            \"=========\";
+        private const string _Stage4 =
+            \"  +---+ \n\" +
+            \"  |   | \n\" +
+            \"  O   | \n\" +
+            \" /|   |\n\" +
+            \"      |\n\" +
+            \"      | \n\" +
+            \"=========\";
+        private const string _Stage5 =
+            \"  +---+ \n\" +
+            \"  |   | \n\" +
+            \"  O   | \n\" +
+            \" /|\\  |\n\" +
+            \"      |\n\" +
+            \"      | \n\" +
+            \"=========\";
+        private const string _Stage6 =
+            \"  +---+ \n\" +
+            \"  |   | \n\" +
+            \"  O   | \n\" +
+            \" /|\\  |\n\" +
+            \" /    |\n\" +
+            \"      | \n\" +
+            \"=========\";
+        private const string _Stage7 =
+            \"  +---+ \n\" +
+            \"  |   | \n\" +
+            \"  O   | \n\" +
+            \" /|\\  |\n\" +
+            \" / \\  |\n\" +
+            \"      | \n\" +
+           \"=========\";
+        private const string _Stage8 =
+        \"  +---+ \n\" +
+        \"  |   | \n\" +
+        \"  O'   | \n\" +
+        \" /|\\  |\n\" +
+        \" / \\  |\n\" +
+        \"      | \n\" +
+       \"=========\";
+        private const string _Stage9 =
+        \"  +---+ \n\" +
+        \"  |   | \n\" +
+        \" 'O'   | \n\" +
+        \" /|\\  |\n\" +
+        \" / \\  |\n\" +
+        \"      | \n\" +
+       \"=========\";
+
+
+        public HangmanGame(GameMode gameMode)
+        {
+
+         
+            Init(gameMode);
+        }
+      
+     
+
+        private void Init(GameMode gameMode)
+        {
+
+
+            UsedChars = new HashSet<char>();
+                    
+
+            switch (gameMode)
+            {
+                case GameMode.Easy:
+                    Stages = new string[10];
+                    Stages[9] = _Stage0;
+                    Stages[8] = _Stage1;
+                    Stages[7] = _Stage2;
+                    Stages[6] = _Stage3;
+                    Stages[5] = _Stage4;
+                    Stages[4] = _Stage5;
+                    Stages[3] = _Stage6;
+                    Stages[2] = _Stage7;
+                    Stages[1] = _Stage8;
+                    Stages[0] = _Stage9;
+                 
+                    Lives = _LivesForEasyMode;
+                    break;
+                case GameMode.Medium:
+
+
+                    //Medium Stages
+                    Stages = new string[8];
+                    Stages[7] = _Stage0;
+                    Stages[6] = _Stage1;
+                    Stages[5] = _Stage2;
+                    Stages[4] = _Stage3;
+                    Stages[3] = _Stage4;
+                    Stages[2] = _Stage5;
+                    Stages[1] = _Stage6;
+                    Stages[0] = _Stage7;
+
+                    Lives = _LivesForMediumMode;
+                    break;
+                case GameMode.Hard:
+                    //Hard Stages
+                    Stages = new string[5];
+                    Stages[4] = _Stage1;
+                    Stages[3] = _Stage2;
+                    Stages[2] = _Stage3;
+                    Stages[1] = _Stage5;
+                    Stages[0] = _Stage7;
+
+                    Lives = _LivesForHardMode;
+                    break;
+            }
+            GameIsFinished = false;
+            WonGame = false;
+            SecretWord = GetRandomWord(gameMode);
+            CurrentWord = new StringBuilder().Append('*', SecretWord.Length).ToString();
+        }
+        
+             
+private string GetRandomWord(GameMode gameMode)
+        {
+            int minLength = 0;
+            int maxLength = int.MaxValue;
+
+            switch (gameMode)
+            {
+                case GameMode.Easy:
+                    maxLength = _MaxLengthForEasyWord;
+                    break;
+                case GameMode.Medium:
+                    minLength = _MinLengthForMediumWord;
+                    maxLength = _MaxLengthForMediumWord;
+                    break;
+                case GameMode.Hard:
+                    minLength = _MinLengthForHardWord;
+                    break;
+                default:
+                    throw new Exception(\"AAAAAAAAAAAAAAAAAAAAA, mishvelet\");
+            }
+
+            string[] words = File.ReadAllLines(\"F:/ConsoleApp2/ConsoleApp2/Words.txt\");
+
+            string secretWord;
+
+            while (true)
+            {
+                int index = new Random().Next(words.Length);
+
+                secretWord = words[index];
+
+                if (!(secretWord.Length < minLength || secretWord.Length > maxLength))
+                {
+                    break;
+                }
+            }
+
+            return secretWord;
+        }
+
+        public void Start()
+        {
+            while (!GameIsFinished)
+            {
+                Console.WriteLine(Stages[Lives]);
+                Console.WriteLine($\"Your Lives counter: {Lives}\");
+                Console.WriteLine($\"Your current word: {CurrentWord}\");
+                char guess = TakeAGuess();
+                UpdateGame(guess);
+                CheckGameFinish();
+            }
+
+            if (WonGame)
+            {
+                Console.WriteLine(\"YAAAY you won the game, the word was: \" + SecretWord);
+            }
+            else
+            {
+                Console.WriteLine(\"Yo looser, you lostthe game, the word was \" + SecretWord);
+            }
+        }
+
+        private void CheckGameFinish()
+        {
+            if (!CurrentWord.Contains('*'))
+            {
+                WonGame = true;
+                GameIsFinished = true;
+            }
+            else if (Lives == 0)
+            {
+                WonGame = false;
+                GameIsFinished = true;
+                Console.WriteLine(Stages[0]);
+            }
+        }
+
+        private void UpdateGame(char guess)
+        {
+            int charAmount = 0;
+            if (SecretWord.Contains(guess))
+            {
+
+                for (int i = 0; i < SecretWord.Length; i++)
+                {
+                    if (SecretWord[i] == guess)
+                    {
+                        charAmount++;
+                        CurrentWord = CurrentWord.Substring(0, i) + guess + CurrentWord.Substring(i + 1);
+                    }
+                }
+
+            }
+            else
+            {
+                Lives--;
+            }
+
+            Console.WriteLine($\"Secret word contained {charAmount} {guess}-s\");
+            UsedChars.Add(guess);
+        }
+
+        private char TakeAGuess()
+        {
+
+            Console.WriteLine(\"Your used chars: \");
+            foreach (char ch in UsedChars)
+            {
+                Console.Write(ch + \" \");
+            }
+            Console.Write(\"\n\");
+
+            Console.WriteLine(\"Please enter your next guess: \");
+
+            char result;
+            while (true)
+            {
+                string guess = Console.ReadLine();
+                if (guess.Length != 1)
+                {
+                    Console.WriteLine(\"You should enter 1 char length string\");
+                    continue;
+                }

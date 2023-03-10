@@ -1,0 +1,69 @@
+#include <iostream>
+#include <string>
+#include <cstdlib>
+#include <ctime>
+
+using namespace std;
+
+enum class GameMode { Easy, Medium, Hard };
+
+class HangmanGame {
+private:
+    string wordToGuess;
+    string lettersGuessed;
+    int numGuessesRemaining;
+
+    void displayGameState() {
+        // Code to display the game state goes here
+    }
+
+    void updateGameState(char guess) {
+        // Code to update the game state goes here
+    }
+
+    bool checkIfGameWon() {
+        // Code to check if the game is won goes here
+        return false;
+    }
+
+    bool checkIfGameLost() {
+        // Code to check if the game is lost goes here
+        return false;
+    }
+
+public:
+    HangmanGame(GameMode mode) {
+        // Code to initialize the game based on the selected mode goes here
+    }
+
+    void Start() {
+        // Code to start the game goes here
+    }
+};
+
+int Gamemode() {
+    cout << "Please enter what game mode you want\n";
+    cout << "For easy mode enter 1\nFor medium mode enter 2\nFor hard mode enter 3\n";
+    int UserChoice = 0;
+    while (true) {
+        cin >> UserChoice;
+        if (UserChoice < 1 || UserChoice > 3) {
+            cout << "Please enter only 1, 2, or 3.\n";
+        } else {
+            break;
+        }
+    }
+    return UserChoice;
+}
+
+int main() {
+    int UserChoice = Gamemode();
+    if (UserChoice == 1) {
+        HangmanGame(GameMode::Easy).Start();
+    } else if (UserChoice == 2) {
+        HangmanGame(GameMode::Medium).Start();
+    } else if (UserChoice == 3) {
+        HangmanGame(GameMode::Hard).Start();
+    }
+    return 0;
+}
